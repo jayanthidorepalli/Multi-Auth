@@ -1,8 +1,9 @@
 pipeline {
     agent any
+
     environment {
-    PATH = "/usr/bin:/usr/local/bin:${env.PATH}"
-}
+        PATH = "/usr/bin:/usr/local/bin:${env.PATH}"
+    }
 
     stages {
 
@@ -25,21 +26,27 @@ pipeline {
         }
 
         stage('Restart PM2') {
-    steps {
-        sshagent(['ec2-key']) {
-            sh '''
-            ssh -o StrictHostKeyChecking=no ubuntu@172.31.13.84 "
-                cd /home/ubuntu/Multi-Auth &&
-                pm2 restart multi-auth
-            "
-            '''
+            steps {
+                sshagent(['ec2-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@172.31.13.84 "
+                        cd /home/ubuntu/Multi-Auth &&
+                        pm2 restart multi-auth
+                    "
+                    '''
+                }
+            }
         }
-    }
-}
 
         stage('Health Check') {
             steps {
-                sh 'curl http://localhost/auth'
+                sshagent(['ec2-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@172.31.13.84 "
+                        curl http://localhost/auth
+                    "
+                    '''
+                }
             }
         }
     }
