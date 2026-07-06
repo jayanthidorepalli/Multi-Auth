@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+    PATH = "/usr/bin:/usr/local/bin:${env.PATH}"
+}
 
     stages {
 
