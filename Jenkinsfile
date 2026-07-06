@@ -57,7 +57,18 @@ pipeline {
         }
 
         failure {
-            echo 'Deployment Failed'
+            sshagent(['ec2-key']) {
+                sh '''
+                ssh -o StrictHostKeyChecking=no ubuntu@172.31.13.84 "
+                    cd /home/ubuntu/Multi-Auth &&
+                    git reset --hard HEAD~1 &&
+                    npm install &&
+                    npx prisma generate &&
+                    pm2 restart multi-auth
+                "
+                '''
+            }
+            echo 'Deployment Failed - Rollback Completed'
         }
     }
 }
