@@ -28,7 +28,7 @@ pipeline {
     steps {
         sshagent(['ec2-key']) {
             sh '''
-            ssh -o StrictHostKeyChecking=no ubuntu@localhost "
+            ssh -o StrictHostKeyChecking=no ubuntu@172.31.13.84 "
                 cd /home/ubuntu/Multi-Auth &&
                 pm2 restart multi-auth
             "
