@@ -25,10 +25,17 @@ pipeline {
         }
 
         stage('Restart PM2') {
-            steps {
-                sh 'pm2 restart multi-auth'
-            }
+    steps {
+        sshagent(['ec2-key']) {
+            sh '''
+            ssh -o StrictHostKeyChecking=no ubuntu@localhost "
+                cd /home/ubuntu/Multi-Auth &&
+                pm2 restart multi-auth
+            "
+            '''
         }
+    }
+}
 
         stage('Health Check') {
             steps {
